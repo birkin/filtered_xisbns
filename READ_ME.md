@@ -129,7 +129,7 @@ Notes
 
 - code contact info: [birkin_diana@brown.edu] [BJD]
 
-[BJD]: mailto://birkin_diana@brown.edu
+[BJD]: mailto:birkin_diana@brown.edu
 [OXI]: http://www.oclc.org/xisbn/default.htm
 
 ---
