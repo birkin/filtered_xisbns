@@ -3,11 +3,11 @@ _( formatted in [markdown](http://daringfireball.net/projects/markdown/) )_
 About
 =====
 
-This [django] [DJA] webapp provides a simple wrapper around a class that takes an ISBN [ISB], grabs a list of alternate ISBNs from [OCLC's xisbn service] [OXI], filters them on language and format, and returns the filtered list.
+This [django] [DJA] webapp provides a simple wrapper around a class that takes an [ISBN] [ISB], grabs a list of alternate ISBNs from [OCLC's xisbn service] [OXI], filters them on language and format, and returns the filtered list.
 
 The filtering class matches the original's language exactly, and matches a list of specified formats.
 
-Purpose: To offer user a list of relevant alternate books. Assumptions: same language, and certain formats, are relevant (i.e. paperpack & hardcover similar, paperback & audio less so).
+Purpose: To offer user a list of relevant alternate books. Assumption: same language, and certain formats, are relevant (i.e. paperpack & hardcover are similar, paperback & audio less so).
 
 [DJA]: https://www.djangoproject.com
 [ISB]: http://en.wikipedia.org/wiki/ISBN
@@ -80,7 +80,7 @@ Class
 
     ## other info...
 
-    ## other info: x.alternates
+    ## x.alternates
     >>> assert type( x.alternates ) == list  # x.alternates are oclc's results; the first is the requested isbn
     >>> assert sorted( x.alternates[0].keys() ) == [
           u'author', u'city', u'ed', 
@@ -127,8 +127,9 @@ Notes
         10
 
 
-- code contact info: <birkin_diana@brown.edu>
+- code contact info: [birkin_diana@brown.edu] [BJD]
 
+[BJD]: mailto://birkin_diana@brown.edu
 [OXI]: http://www.oclc.org/xisbn/default.htm
 
 ---
