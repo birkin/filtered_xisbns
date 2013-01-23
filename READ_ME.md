@@ -5,7 +5,7 @@ About
 
 This [django] [DJA] webapp provides a simple wrapper around a class that takes an [ISBN] [ISB], grabs a list of alternate ISBNs from [OCLC's xisbn service] [OXI], filters them on language and format, and returns the filtered list.
 
-The filtering class matches the original's language exactly, and matches a list of specified formats.
+Each filtered item matches the original's language exactly, and matches a list of specified formats.
 
 Purpose: To offer user a list of relevant alternate books. Assumption: same language, and certain formats, are relevant (i.e. paperpack & hardcover are similar, paperback & audio less so).
 
