@@ -8,10 +8,10 @@ Common usage
     x = XID( isbn=u'1234', settings={u'OCLC_AFFILIATE_ID': u'the_id'} )
     x.getFilteredAlternates()
     assert type( x.filtered_alternates ) == list
-    assert sorted( x.filtered_alternates[0].keys() ) == [ 
-      u'author', u'city', u'ed', 
-      u'form', u'isbn', u'lang', 
-      u'oclcnum', u'publisher', u'title', 
+    assert sorted( x.filtered_alternates[0].keys() ) == [
+      u'author', u'city', u'ed',
+      u'form', u'isbn', u'lang',
+      u'oclcnum', u'publisher', u'title',
       u'url', u'year'] )
     ## filtered_alternate_entries match original isbn on language, and contain a self.blessed_formats entry'
 
@@ -55,7 +55,7 @@ class XID(object):
         setattr( s, key, value )
       settings = s
     else:
-      raise Exception, u'if passing in settings, settings must be settings module or settings module path.' 
+      raise Exception, u'if passing in settings, settings must be settings module or settings module path.'
     ## attributes
     assert settings.OCLC_AFFILIATE_ID
     self.OCLC_AFFILIATE_ID = settings.OCLC_AFFILIATE_ID
@@ -124,12 +124,12 @@ class XID(object):
       else:
         ## oclc w/no corresponding isbn -- leave form&language attributes initialized to None
         self.log.append( u'- in getAlternates; no isbn for this oclcnum' )
-    return self.alternates    
-    
+    return self.alternates
+
   def getFilteredAlternates( self ):
     '''
     - Runs getAlternates() if needed.
-    - Attempts to populate self.filtered_alternates with a subset of self.alternates 
+    - Attempts to populate self.filtered_alternates with a subset of self.alternates
       where language is same as original and format is in self.blessed_formats.
     '''
     if self.alternates == None:
@@ -156,7 +156,7 @@ class XID(object):
     alternates = self.alternates[1:]  # removing the request-isbn
     for alt_entry in alternates:
       assert type(alt_entry) == dict
-      if not u'form' in alt_entry and u'lang' in alt_entry:
+      if not u'form' in alt_entry and not u'lang' in alt_entry:
         # print u'- no format_code or language for alt_entry: %s' % alt_entry
         continue
       if not alt_entry[u'lang'] == self.language_code:
@@ -171,7 +171,7 @@ class XID(object):
           break
     self.filtered_alternates = filtered_list
     return self.filtered_alternates
-        
+
   def getFilteredAlternatesFromOclcnum(self):
     '''
     - Called by: self.getFilteredAlternates()
@@ -211,12 +211,12 @@ class XID(object):
             filtered_list.append( possibility )
     self.filtered_alternates = filtered_list
     return self.filtered_alternates
-                  
+
   def makeBaseUrl( self, requested_oclcnum, requested_isbn ):
     '''
     - Called by XID.__init__
     '''
-    if self.requested_oclcnum: 
+    if self.requested_oclcnum:
       url = u'http://xisbn.worldcat.org/webservices/xid/oclcnum/%s?method=getEditions&format=json&fl=*&ai=%s' % ( requested_oclcnum, self.OCLC_AFFILIATE_ID )
     else:
       url = u'http://xisbn.worldcat.org/webservices/xid/isbn/%s?method=getEditions&format=json&fl=*&ai=%s' % ( requested_isbn, self.OCLC_AFFILIATE_ID )

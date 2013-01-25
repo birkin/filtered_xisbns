@@ -8,7 +8,7 @@ from xisbn_app.models import XID
 
 
 class Interface_Test(TestCase):
-  
+
   def test_badIsbn(self):
     output = urllib2.urlopen( u'http://127.0.0.1/easyborrow/xisbn/isbn/123/', timeout=settings_app.URLLIB2_TIMEOUT ).read()
     json_dict = json.loads( output )
@@ -19,7 +19,7 @@ class Interface_Test(TestCase):
     assert json_dict[u'response'][u'status'] == u'invalidId', json_dict[u'response'][u'status']
     assert len(json_dict[u'response'][u'alternates']) == 0
     assert len(json_dict[u'response'][u'filtered_alternates']) == 0
-  
+
   def test_goodIsbnWithFilteredAlternates(self):
     output = urllib2.urlopen( u'http://127.0.0.1/easyborrow/xisbn/isbn/9780688002305/', timeout=settings_app.URLLIB2_TIMEOUT ).read()
     json_dict = json.loads( output )
@@ -29,7 +29,7 @@ class Interface_Test(TestCase):
     assert sorted(json_dict.keys()) == [u'documentation', u'request', u'response' ]
     assert sorted(json_dict[u'request'].keys()) == [u'number', u'number_type' ]
     assert sorted(json_dict[u'response'].keys()) == [u'alternates', u'filtered_alternates', u'status' ]
-    
+
   def test_goodIsbnWithNoFilteredAlternates(self):
     output = urllib2.urlopen( u'http://127.0.0.1/easyborrow/xisbn/isbn/9780295987316/', timeout=settings_app.URLLIB2_TIMEOUT ).read()
     json_dict = json.loads( output )
@@ -39,7 +39,7 @@ class Interface_Test(TestCase):
     assert sorted(json_dict.keys()) == [u'documentation', u'request', u'response' ]
     assert sorted(json_dict[u'request'].keys()) == [u'number', u'number_type' ]
     assert sorted(json_dict[u'response'].keys()) == [u'alternates', u'filtered_alternates', u'status' ]
-    
+
   def test_oclcnumWithNoFilteredAlternates(self):
     output = urllib2.urlopen( u'http://127.0.0.1/easyborrow/xisbn/oclcnum/123/', timeout=settings_app.URLLIB2_TIMEOUT ).read()
     json_dict = json.loads( output )
@@ -50,7 +50,7 @@ class Interface_Test(TestCase):
     assert sorted(json_dict.keys()) == [u'documentation', u'request', u'response' ]
     assert sorted(json_dict[u'request'].keys()) == [u'number', u'number_type' ]
     assert sorted(json_dict[u'response'].keys()) == [u'alternates', u'filtered_alternates', u'status' ]
-				
+
 	# end class Interface_Test()
 
 
@@ -58,7 +58,7 @@ class XID_Tests(TestCase):
   '''
   - TODO: BA/english - should also return the BC/english?
   '''
-  
+
   def test_settings_instantiation(self):
     '''
     Tests that module instantiation handles settings not-defined, or defined as dict, module, or path.
@@ -68,7 +68,7 @@ class XID_Tests(TestCase):
       x = XID( OCLC=u'673595' )  # http://www.worldcat.org/title/zen-and-the-art-of-motorcycle-maintenance-an-inquiry-into-values/oclc/673595
     except Exception, e:
       assert e.message == u'requires settings dict, or module or module path.', e.message
-    ## dict method    
+    ## dict method
     settings_dict = { 'OCLC_AFFILIATE_ID': settings_app.OCLC_AFFILIATE_ID }
     x = XID( OCLC=u'673595', settings=settings_dict )
     assert x.requested_oclcnum == u'673595'
@@ -84,9 +84,9 @@ class XID_Tests(TestCase):
     assert x.xid_url[0:96] == u'http://xisbn.worldcat.org/webservices/xid/oclcnum/673595?method=getEditions&format=json&fl=*&ai=', x.xid_url[0:96]
 
   ## getAlternates()
-  
+
   def test_getAlternates_isbnBad(self):
-    x = XID( 
+    x = XID(
       ISBN=u'123',
       settings={ u'OCLC_AFFILIATE_ID': settings_app.OCLC_AFFILIATE_ID } )
     assert x.alternates == None
@@ -96,7 +96,7 @@ class XID_Tests(TestCase):
     assert x.oclc_status_code == u'invalidId', x.oclc_status_code
 
   def test_getAlternates_isbnWithAlternates(self):
-    x = XID( 
+    x = XID(
       ISBN=u'9780688002305',  # ZMM
       settings={ u'OCLC_AFFILIATE_ID': settings_app.OCLC_AFFILIATE_ID } )
     assert x.alternates == None
@@ -109,10 +109,10 @@ class XID_Tests(TestCase):
     assert x.format_codes == [u'BA'], x.format_codes
     assert type(x.language_code) == unicode, type(x.language_code)
     assert x.language_code == u'eng', x.language_code
-    assert x.oclcnum_isbns == None  
-    
+    assert x.oclcnum_isbns == None
+
   def test_getAlternates_oclcnumBad(self):
-    x = XID( 
+    x = XID(
       OCLC=u'abc',
       settings={ u'OCLC_AFFILIATE_ID': settings_app.OCLC_AFFILIATE_ID } )
     assert x.alternates == None
@@ -120,7 +120,7 @@ class XID_Tests(TestCase):
     assert x.oclc_status_code == None
     x.getAlternates()
     assert x.oclc_status_code == u'invalidId', x.oclc_status_code
-    
+
   def test_getAlternates_oclcnumWithAnIsbnWithAlternates(self):
     ## oclcnum (which has a corresponding isbn)
     x = XID( OCLC=u'673595', settings={ u'OCLC_AFFILIATE_ID': settings_app.OCLC_AFFILIATE_ID } )
@@ -129,13 +129,13 @@ class XID_Tests(TestCase):
     assert type(data) == list
     assert data[0]['oclcnum'] == [u'673595']
     assert x.oclc_status_code == u'ok'
-    assert type(x.alternates) == list    
+    assert type(x.alternates) == list
     assert type(x.format_codes[0]) == unicode
     assert x.format_codes == [u'BA'], x.format_codes
     assert type(x.language_code) == unicode, type(x.language_code)
     assert x.language_code == u'eng', x.language_code
     assert x.oclcnum_isbns == [u'9780688002305']
-    
+
   def test_getAlternates_oclcnumNoIsbnAlternates(self):
     x = XID( OCLC=u'123', settings={ u'OCLC_AFFILIATE_ID': settings_app.OCLC_AFFILIATE_ID } )
     assert x.alternates == None
@@ -143,11 +143,11 @@ class XID_Tests(TestCase):
     assert x.oclc_status_code == u'ok', x.oclc_status_code
     assert len(x.alternates) > 0, x.alternates
     assert x.oclcnum_isbns == None, x.oclcnum_isbns
-      
+
   ## getFilteredAlternates()
-  
+
   def test_getFilteredAlternates_isbnNoFilteredAlternates(self):
-    x = XID( 
+    x = XID(
       ISBN=u'9780802130198',  # 'Zen poems...'
       settings={ u'OCLC_AFFILIATE_ID': settings_app.OCLC_AFFILIATE_ID } )
     assert x.alternates == None
@@ -156,7 +156,7 @@ class XID_Tests(TestCase):
     assert type(x.alternates) == list
     assert type(x.filtered_alternates) == list
     assert len(x.filtered_alternates) == 0
-      
+
   def test_getFilteredAlternates_isbnWithAlternates(self):
     x = XID( ISBN=u'9780688002305', settings={ u'OCLC_AFFILIATE_ID': settings_app.OCLC_AFFILIATE_ID } )
     assert x.alternates == None
@@ -175,7 +175,14 @@ class XID_Tests(TestCase):
       if not entry[u'form'] == x.format_codes:
         alternate_format_found = True
     self.assertEqual( alternate_format_found, True )
-          
+
+  def test_getFilteredAlternates_missingLanguageKey(self):
+    x = XID(
+      ISBN=u'007304962X',  # Vander's human physiology...
+      settings={ u'OCLC_AFFILIATE_ID': settings_app.OCLC_AFFILIATE_ID } )
+    x.getFilteredAlternates()
+    self.assertEqual( type(x.filtered_alternates), list )
+
   def test_getFilteredAlternates_oclcnumWithAnIsbnWithAlternates(self):
     x = XID( OCLC=u'673595', settings={ u'OCLC_AFFILIATE_ID': settings_app.OCLC_AFFILIATE_ID } )
     assert x.alternates == None
@@ -198,6 +205,6 @@ class XID_Tests(TestCase):
     assert x.oclc_status_code == u'ok', x.oclc_status_code
     assert len(x.alternates) > 0, x.alternates
     assert x.oclcnum_isbns == None, x.oclcnum_isbns
-  
+
   # end class XID_Tests()
-    
+
