@@ -156,15 +156,12 @@ class XID(object):
     alternates = self.alternates[1:]  # removing the request-isbn
     for alt_entry in alternates:
       assert type(alt_entry) == dict
-      if not u'form' in alt_entry and not u'lang' in alt_entry:
-        # print u'- no format_code or language for alt_entry: %s' % alt_entry
+      if not u'form' in alt_entry.keys() or not u'lang' in alt_entry.keys():
         continue
       if not alt_entry[u'lang'] == self.language_code:
-        # print u'- no language match for alt_entry: %s' % alt_entry
         continue
       for format_code in alt_entry[u'form']:
         if not format_code in self.blessed_formats and not format_code in self.format_codes:
-          # print u'- no match due to invalid format code for alt_entry: %s' % alt_entry
           break
         if format_code in self.blessed_formats:
           filtered_list.append( alt_entry )

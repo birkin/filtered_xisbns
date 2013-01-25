@@ -176,7 +176,16 @@ class XID_Tests(TestCase):
         alternate_format_found = True
     self.assertEqual( alternate_format_found, True )
 
+  def test_getFilteredAlternates_missingFormKey(self):
+    '''x.alternates contains an entry with no 'form' key'''
+    x = XID(
+      ISBN=u'9781853994692',  # Plato's 'Crito'...
+      settings={ u'OCLC_AFFILIATE_ID': settings_app.OCLC_AFFILIATE_ID } )
+    x.getFilteredAlternates()
+    self.assertEqual( type(x.filtered_alternates), list )
+
   def test_getFilteredAlternates_missingLanguageKey(self):
+    '''x.alternates contains an entry with no 'language' key'''
     x = XID(
       ISBN=u'007304962X',  # Vander's human physiology...
       settings={ u'OCLC_AFFILIATE_ID': settings_app.OCLC_AFFILIATE_ID } )
